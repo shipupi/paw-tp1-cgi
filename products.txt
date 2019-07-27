@@ -1,0 +1,6 @@
+1,Impresora,200
+2,CPU,500
+3,Calculadora,100
+4,Monitor,150
+5,Teclado,120
+6,Cooler,50
