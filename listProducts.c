@@ -66,10 +66,40 @@ int loadProducts(Product ** products) {
 	return i;
 }
 
+void loadParameters(int* from, int* to) {
+		char qs[200];
+		char *saveptr;
+		strcpy(qs,getenv("QUERY_STRING"));
+		char * t1 = strtok_r(qs,"&",&saveptr);
+		while(t1 != NULL) {
+			char* saveptr2;
+			char* t2 = strtok_r(t1,"=", &saveptr2);
+			if (t2 != NULL) {
+				if (strcmp("from", t2) == 0) {
+					t2 = strtok_r(NULL, "=", &saveptr2);
+					if(t2 != NULL) {
+						*(from) = atoi(t2);
+					}
+				}
+				if (strcmp("to", t2) == 0) {
+					t2 = strtok_r(NULL, "=", &saveptr2);
+					if(t2 != NULL) {
+						*(to) = atoi(t2);
+					}
+				}
+			}
+			t1 = strtok_r(NULL,"&",&saveptr);
+		}
+}
 
 void listProducts() {
 	Product *products[MAXPRODUCTS];
 	int size = loadProducts(products);
+	int from = -1;
+	int to = -1;
+	loadParameters(&from, &to);
+
+	printf("From: %d - To: %d\n", from,to);
 	printf("<ul>");
 	for (int i = 0; i < size; ++i)
 	{
