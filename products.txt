@@ -3,4 +3,10 @@
 3,Calculadora,100
 4,Monitor,150
 5,Teclado,120
-6,Cooler,50
+6,Cooler,5012,asdf,123
+12,asdf,123
+10,Nuevo+Accesorio,50
+11,Nuevo+Accesorio+2,200
+13,Nuevo+Accesorio+3,123
+13,Nuevo+Accesorio+3,123
+1,adsfasdf,687

@@ -2,21 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "product.h"
+#include "headers.h"
 
-
-#define PRODUCTSFILE "products.txt"
-#define NAMESIZE 50
-#define MAXPRODUCTS 50
-
-typedef struct  {
-	int id;
-	char name[NAMESIZE];
-	int price;
-} Product;
-
-void headers() {
-	printf("Content-type: text/html\n\n");
-}
 
 void upperBody() {
 	printf("\
@@ -35,35 +23,6 @@ void lowerBody() {
 			</body>\
 		</html>"
 	);
-}
-
-int loadProducts(Product ** products) {
-	FILE *prods;
-	int r;
-	size_t len;
-	char * productStr;
-	prods = fopen(PRODUCTSFILE, "r");
-	if (prods == NULL) {
-		fprintf(stderr, "Unable to load products");
-		return 0;
-	}
-	int i = 0;
-	while((r = getline(&productStr,&len,prods)) != -1) {
-		if(i == MAXPRODUCTS) {
-			fprintf(stderr, "Max product number reached, truncating...");
-			return i;
-		}
-		char * tok = strtok(productStr,",");
-		Product *p = (Product*) malloc(sizeof(Product));
-		p->id = atoi(tok);
-		tok = strtok (NULL, ",");
-		strcpy(p->name,tok);
-		tok = strtok (NULL, ",");
-		p->price = atoi(tok);
-		products[i] = p;
-		i++;
-	}
-	return i;
 }
 
 void loadParameters(int* from, int* to) {
@@ -99,13 +58,33 @@ void listProducts() {
 	int to = -1;
 	loadParameters(&from, &to);
 
-	printf("From: %d - To: %d\n", from,to);
-	printf("<ul>");
+	if (from != -1) {
+		printf("<div>From: %d</div>", from);
+	}
+	if (to != -1) {
+		printf("<div>To: %d</div>", to);
+	}
+
+	printf("<table>");
+	printf("<thead>");
+	printf("<tr><td>ID</td><td>Name</td><td>Price</td></tr>");
+	printf("</thead>");
+	printf("<tbody>");
 	for (int i = 0; i < size; ++i)
 	{
-		printf("<li>%d - %s - %d</li>", products[i]->id, products[i]->name, products[i]->price);
+		if (((from == -1) || (products[i]->price > from)) && ((to == -1) || (products[i]->price < to))) {
+			printf("<tr><td>%d</td><td>%s</td><td>%d</td></tr>", products[i]->id, products[i]->name, products[i]->price);
+		}
 	}
-	printf("</ul>");
+	printf("</tbody>");
+	printf("</table>");
+	printf("<div>");
+	printf("<a href=\"/\"><button type=\"button\">HOME</button></a>");
+	printf("<a href=\"/addProduct.html\"><button type=\"button\">ADD</button></a>");
+	printf("</div>");
+
+	
+
 }
 
 void html() {
@@ -118,7 +97,7 @@ void html() {
 
 int main()
 {
-	headers();
+	basicHeader();
 	html();
 
 	return 0;
